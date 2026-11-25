@@ -233,7 +233,7 @@ private struct PreviewSettings: View {
 private struct AboutSettings: View {
     var body: some View {
         Form {
-            MdyAboutSections()
+            AppAboutSections(appName: "Mdy", english: Loc.isEnglish)
         }
         .formStyle(.grouped)
     }

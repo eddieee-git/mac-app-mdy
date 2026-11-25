@@ -42,8 +42,6 @@ swift scripts/make_icon.swift <iconset> [docs/images/icon.png]   # 아이콘 다
 - **번역은 `L()` 대신 `tr()` + en.json**: 같은 Dock 앱인 Gitty와 같은 방식(문자열 보간을 그대로 키로 쓸 수 있음).
 - **업데이트 키 도구 이름 `scripts/update-signing.swift`**: Gitty에서 가져와 키체인에 키를 둔다(STYLE의 `sign-update.swift`와 이름만 다름).
 - **설정에 단축키 탭 없음**: 전역 단축키가 없고 메뉴 단축키만 있어서. 탭은 일반 · 편집기 · 미리보기 · 정보.
-- **정보 화면은 `MdyAboutSections`**: Mdy가 아직 `mac-app/shared/AppAbout.swift`의 `AppFamily.members`에 없어서 자기 정보는 따로 보여 주고 다른 앱 목록만 공통 것을 쓴다.
-  Mdy를 공통 목록에 넣으면(`AppFamily.members`, `apply-common-docs.py`의 `APPS`) `AppAboutSections(appName: "Mdy", …)`로 바꾼다.
 - **Intel도 지원**: 문서 앱이라 Gitty처럼 유니버설로 낸다.
 - **빌드 스크립트가 `build.sh` + `scripts/build-app.sh`**: SwiftPM 없이 swiftc로 앱·훑어보기 확장을 따로 컴파일하고 lipo로 합친다. `build.sh install`은 개발용 설치.
 
