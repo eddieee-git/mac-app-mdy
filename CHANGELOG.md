@@ -2,7 +2,7 @@
 
 버전마다 자세한 내용은 [docs/releases](docs/releases)와 [GitHub 릴리스](https://github.com/eddieee-git/mac-app-mdy/releases)에 있어요. English: [CHANGELOG.en.md](CHANGELOG.en.md)
 
-## 0.1.0 (출시 전)
+## 0.1.0 (2026-11-25)
 
 - 첫 공개 버전
 - 원본·미리보기 나란히 보기, 비율 버튼(1:3 · 1:1 · 3:1), 양쪽 위치 표시와 스크롤 동기화

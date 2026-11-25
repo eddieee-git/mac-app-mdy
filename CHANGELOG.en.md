@@ -2,7 +2,7 @@
 
 Details for each version are in [docs/releases](docs/releases) and [GitHub Releases](https://github.com/eddieee-git/mac-app-mdy/releases). 한국어: [CHANGELOG.md](CHANGELOG.md)
 
-## 0.1.0 (unreleased)
+## 0.1.0 (2026-11-25)
 
 - First public version
 - Source and preview side by side, ratio buttons (1:3 · 1:1 · 3:1), position highlight and sync scrolling on both sides
