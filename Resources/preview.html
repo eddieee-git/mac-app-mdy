@@ -1,0 +1,956 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-MDY_NONCE' https://cdn.jsdelivr.net; style-src 'unsafe-inline' https://cdn.jsdelivr.net; img-src * data: blob: file:; media-src * data: blob: file:; font-src data: https://cdn.jsdelivr.net; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1f2328;
+    --muted: #59636e;
+    --border: #d1d9e0;
+    --subtle: #f6f8fa;
+    --code-bg: rgba(129, 139, 152, 0.12);
+    --link: #0969da;
+    --mark: #fff8c5;
+    --note: #0969da; --tip: #1a7f37; --important: #8250df; --warning: #9a6700; --caution: #d1242f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1e1e1e;
+      --fg: #e6e6e6;
+      --muted: #9198a1;
+      --border: #3d444d;
+      --subtle: #262626;
+      --code-bg: rgba(101, 108, 118, 0.25);
+      --link: #4493f8;
+      --mark: #5c4a00;
+      --note: #4493f8; --tip: #3fb950; --important: #ab7df8; --warning: #d29922; --caution: #f85149;
+    }
+  }
+  html { background: var(--bg); }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Helvetica Neue", sans-serif;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    -webkit-font-smoothing: antialiased;
+  }
+  #content { max-width: 860px; margin: 0 auto; padding: 32px 40px 80px; }
+  #content.empty::before { content: attr(data-empty); color: var(--muted); }
+  #content > :first-child { margin-top: 0 !important; }
+
+  h1, h2, h3, h4, h5, h6 { margin: 1.5em 0 0.6em; font-weight: 600; line-height: 1.3; }
+  h1 { font-size: 2em; padding-bottom: 0.3em; border-bottom: 1px solid var(--border); }
+  h2 { font-size: 1.5em; padding-bottom: 0.3em; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 1.25em; }
+  h4 { font-size: 1em; }
+  h5 { font-size: 0.875em; }
+  h6 { font-size: 0.85em; color: var(--muted); }
+  p, ul, ol, blockquote, pre, table, .markdown-alert { margin: 0 0 1em; }
+
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  img { max-width: 100%; }
+  hr { height: 2px; border: 0; background: var(--border); margin: 1.5em 0; }
+  mark { background: var(--mark); color: inherit; padding: 0 2px; border-radius: 2px; }
+
+  ul, ol { padding-left: 2em; }
+  li + li { margin-top: 0.25em; }
+  li > ul, li > ol { margin: 0.25em 0 0; }
+  li > p { margin: 0.5em 0; }
+  ul.contains-task-list { padding-left: 1.4em; }
+  .task-list-item { list-style: none; }
+  .task-list-item > input { margin: 0 0.4em 0.2em -1.4em; vertical-align: middle; }
+
+  code, pre, kbd { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.875em; }
+  code { background: var(--code-bg); padding: 0.15em 0.4em; border-radius: 5px; }
+  pre { background: var(--subtle); padding: 14px 16px; border-radius: 8px; overflow: auto; line-height: 1.5; word-break: normal; }
+  pre code { background: none; padding: 0; font-size: 1em; white-space: pre; }
+  kbd { border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; }
+
+  blockquote { margin-left: 0; padding: 0 1em; color: var(--muted); border-left: 4px solid var(--border); }
+
+  table { border-collapse: collapse; display: block; width: max-content; max-width: 100%; overflow: auto; }
+  th, td { border: 1px solid var(--border); padding: 6px 13px; }
+  th { font-weight: 600; background: var(--subtle); }
+  tr:nth-child(2n) td { background: var(--subtle); }
+
+  .front-matter { font-size: 0.85em; color: var(--muted); }
+
+  .markdown-alert { padding: 0.5em 1em; border-left: 4px solid var(--c); }
+  .markdown-alert > :last-child { margin-bottom: 0; }
+  .markdown-alert-title { font-weight: 600; color: var(--c); margin-bottom: 0.4em; }
+  .markdown-alert-note { --c: var(--note); }
+  .markdown-alert-tip { --c: var(--tip); }
+  .markdown-alert-important { --c: var(--important); }
+  .markdown-alert-warning { --c: var(--warning); }
+  .markdown-alert-caution { --c: var(--caution); }
+
+  /* 설정: 글꼴·폭·테마 */
+  body.font-serif { font-family: "AppleMyungjo", "New York", Georgia, serif; }
+  body.width-narrow #content { max-width: 680px; }
+  body.width-wide #content { max-width: 1100px; }
+  body.width-full #content { max-width: none; }
+  body.theme-paper { --bg: #fbf8f1; --fg: #3b3833; --subtle: #f2ede2; --border: #e2dacb; --muted: #7a7266; --code-bg: rgba(120, 100, 70, 0.1); }
+  @media (prefers-color-scheme: dark) {
+    body.theme-paper { --bg: #201e1b; --fg: #e4ddd0; --subtle: #2a2723; --border: #3d3933; --muted: #9c9385; --code-bg: rgba(200, 180, 150, 0.12); }
+  }
+
+  /* 코드 색상 */
+  :root {
+    --tok-comment: #59636e; --tok-keyword: #cf222e; --tok-string: #0a3069; --tok-number: #0550ae;
+    --tok-type: #953800; --tok-fn: #6639ba; --tok-attr: #116329; --tok-tag: #116329;
+    --tok-add: #116329; --tok-add-bg: #dafbe1; --tok-del: #82071e; --tok-del-bg: #ffebe9;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --tok-comment: #9198a1; --tok-keyword: #ff7b72; --tok-string: #a5d6ff; --tok-number: #79c0ff;
+      --tok-type: #ffa657; --tok-fn: #d2a8ff; --tok-attr: #7ee787; --tok-tag: #7ee787;
+      --tok-add: #aff5b4; --tok-add-bg: rgba(46, 160, 67, 0.15); --tok-del: #ffdcd7; --tok-del-bg: rgba(248, 81, 73, 0.15);
+    }
+  }
+  .tok-comment { color: var(--tok-comment); font-style: italic; }
+  .tok-keyword { color: var(--tok-keyword); }
+  .tok-string, .tok-regex { color: var(--tok-string); }
+  .tok-number, .tok-literal, .tok-prop { color: var(--tok-number); }
+  .tok-type, .tok-variable { color: var(--tok-type); }
+  .tok-fn { color: var(--tok-fn); }
+  .tok-attr, .tok-tag { color: var(--tok-tag); }
+  .tok-meta { color: var(--tok-comment); }
+  .tok-added { color: var(--tok-add); background: var(--tok-add-bg); }
+  .tok-deleted { color: var(--tok-del); background: var(--tok-del-bg); }
+
+  /* 수식·다이어그램 (불러오기 전·실패 시에는 원문을 고정폭으로 표시) */
+  .math-display { display: block; margin: 0 0 1em; overflow-x: auto; overflow-y: hidden; text-align: center; }
+  .math:not(:has(.katex)), .math-display:not(:has(.katex)) { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.875em; color: var(--muted); }
+  .math-display:not(:has(.katex)) { white-space: pre-wrap; text-align: left; background: var(--subtle); padding: 12px 16px; border-radius: 8px; }
+  .mermaid { margin: 0 0 1em; text-align: center; }
+  .mermaid:not(.rendered) { white-space: pre; text-align: left; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.875em; background: var(--subtle); padding: 14px 16px; border-radius: 8px; overflow: auto; }
+  .mermaid.mermaid-error { border-left: 3px solid var(--caution); }
+  .mermaid svg { max-width: 100%; height: auto; }
+
+  /* 각주 */
+  .footnote-ref a { font-size: 0.75em; padding: 0 1px; }
+  .footnotes { margin-top: 2.5em; padding-top: 1em; border-top: 1px solid var(--border); font-size: 0.875em; color: var(--muted); }
+  .footnotes li > p { margin: 0.25em 0; display: inline; }
+  .footnote-back { margin-left: 0.25em; }
+
+  /* 찾기 */
+  ::highlight(mdy-find) { background-color: rgba(255, 200, 0, 0.35); }
+  ::highlight(mdy-find-current) { background-color: rgba(255, 140, 0, 0.85); color: #000; }
+
+  /* 편집기 ↔ 미리보기 위치 표시 */
+  :root { --hl-block: rgba(9, 105, 218, 0.09); --hl-text: rgba(255, 200, 0, 0.5); }
+  @media (prefers-color-scheme: dark) {
+    :root { --hl-block: rgba(68, 147, 248, 0.16); --hl-text: rgba(255, 200, 0, 0.38); }
+  }
+  .mdy-active:not(tr) { background-color: var(--hl-block); box-shadow: 0 0 0 6px var(--hl-block); border-radius: 3px; }
+  tr.mdy-active > td, tr.mdy-active > th { background-color: var(--hl-block); }
+  ::highlight(mdy) { background-color: var(--hl-text); }
+
+  /* 코드 복사 버튼 */
+  pre { position: relative; }
+  .mdy-copy {
+    position: absolute; top: 6px; right: 6px; padding: 2px 8px; border-radius: 5px; cursor: pointer;
+    font: 12px -apple-system, BlinkMacSystemFont, sans-serif; color: var(--muted);
+    background: var(--bg); border: 1px solid var(--border); opacity: 0; transition: opacity 0.15s;
+  }
+  pre:hover .mdy-copy, .mdy-copy.done { opacity: 1; }
+
+  /* [TOC] 목차 */
+  nav.toc { background: var(--subtle); border-radius: 8px; padding: 10px 16px; margin: 0 0 1em; }
+  nav.toc ul { padding-left: 1.2em; margin: 0; }
+  nav.toc > ul { padding-left: 0.2em; list-style: none; }
+
+  /* 외부 이미지 막음 안내 · 고치기 안내 */
+  #mdy-blocked-bar, #mdy-tip {
+    display: flex; align-items: center; gap: 10px; font: 12px -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--muted); background: var(--subtle); border-bottom: 1px solid var(--border); padding: 6px 16px;
+  }
+  #mdy-tip { position: fixed; left: 16px; right: 16px; bottom: 16px; border: 1px solid var(--border); border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12); justify-content: space-between; z-index: 10; }
+  #mdy-blocked-bar button, #mdy-tip button { font: inherit; border: 1px solid var(--border); background: var(--bg); color: var(--fg); border-radius: 5px; padding: 2px 8px; cursor: pointer; }
+  img.mdy-blocked { display: inline-block; min-width: 40px; min-height: 24px; background: var(--subtle); border: 1px dashed var(--border); }
+  @media print { #mdy-blocked-bar, #mdy-tip { display: none; } }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto !important; } * { transition: none !important; } }
+
+  /* 미리보기에서 바로 고치기 */
+  .mdy-inline-editor { margin: 0 0 1em; list-style: none; }
+  .mdy-inline-editor textarea {
+    display: block; width: 100%; box-sizing: border-box; resize: none; overflow: hidden;
+    font: 0.9em/1.55 ui-monospace, "SF Mono", Menlo, monospace; color: var(--fg);
+    background: var(--subtle); border: 1px solid var(--link); border-radius: 6px;
+    padding: 10px 12px; outline: none; box-shadow: 0 0 0 3px var(--hl-block);
+  }
+  .mdy-inline-hint { font-size: 0.75em; color: var(--muted); margin-top: 4px; }
+  .task-list-item > input:not([disabled]) { cursor: pointer; }
+
+  @media print {
+    .mdy-copy { display: none; }
+    .mdy-active:not(tr) { background: none; box-shadow: none; }
+    tr.mdy-active > td, tr.mdy-active > th { background: inherit; }
+    :root { --bg: #fff; --fg: #000; --subtle: #f6f8fa; --border: #d1d9e0; --muted: #555; }
+    #content { max-width: none; padding: 0; }
+    pre, table, img, blockquote { break-inside: avoid; }
+    h1, h2, h3, h4 { break-after: avoid; }
+  }
+</style>
+</head>
+<body>
+<article id="content" class="empty"></article>
+<script nonce="MDY_NONCE">
+/*MARKDOWN_JS*/
+</script>
+<script nonce="MDY_NONCE">
+(function () {
+  'use strict';
+  // 이 페이지 스크립트만 실행되도록 (CSP nonce). 새로 만드는 <script> 에도 붙입니다.
+  const NONCE = document.currentScript ? document.currentScript.nonce : '';
+  const BLOCKED = 'script,style,iframe,object,embed,link,meta,base,form,frame,frameset,animate,set,animatemotion,animatetransform,foreignobject';
+  const URL_ATTRS = ['href', 'src', 'xlink:href', 'action', 'formaction', 'srcset', 'poster', 'data', 'background', 'dynsrc', 'lowsrc'];
+  const REMOTE_MEDIA = 'img[src], source[src], source[srcset], img[srcset], video[src], video[poster], audio[src]';
+
+  const options = { rich: true };
+  // 화면 글자 (영어일 때 앱이 번역표를 넘겨 줍니다)
+  const T = (s) => (options.strings && options.strings[s]) || s;
+
+  let remoteAllowed = false;
+  let blockedCount = 0;
+
+  function sanitize(root) {
+    root.querySelectorAll(BLOCKED).forEach((el) => el.remove());
+    root.querySelectorAll('*').forEach((el) => {
+      for (const attr of Array.from(el.attributes)) {
+        const name = attr.name.toLowerCase();
+        if (name.startsWith('on') || name === 'style' && /expression\(|url\(\s*['"]?\s*javascript:/i.test(attr.value) ||
+            (URL_ATTRS.includes(name) && /^\s*(javascript|vbscript|data:text\/html)/i.test(attr.value))) {
+          el.removeAttribute(attr.name);
+        }
+      }
+    });
+    // 외부 이미지 막기 (설정): 열자마자 원격 서버에 알려지지 않게 주소를 떼어 둡니다.
+    if (options.blockRemote && !remoteAllowed) {
+      root.querySelectorAll(REMOTE_MEDIA).forEach((el) => {
+        for (const name of ['src', 'srcset', 'poster']) {
+          const value = el.getAttribute(name);
+          if (value && /^\s*(https?:)?\/\//i.test(value)) {
+            el.setAttribute('data-mdy-' + name, value);
+            el.removeAttribute(name);
+            el.classList.add('mdy-blocked');
+            blockedCount++;
+          }
+        }
+      });
+    }
+  }
+
+  const content = document.getElementById('content');
+  const post = (msg) => { try { window.webkit.messageHandlers.mdy.postMessage(msg); } catch (e) {} };
+
+  // 우리가 직접 스크롤할 때 생기는 scroll 이벤트를 편집기로 되돌려 보내지 않도록 합니다.
+  let suppressUntil = 0;
+  const suppress = (ms) => { suppressUntil = performance.now() + ms; };
+  let lastHighlight = null;
+  let sourceLines = [];     // 마지막으로 받은 원문 (줄 단위)
+  let editing = null;       // 미리보기에서 고치는 중인 블록
+  let deferredSrc = null;   // 고치는 동안 미뤄 둔 다시 그리기
+
+  // ---------------------------------------------------------------- 바뀐 블록만 다시 그리기
+  // 줄 번호(data-line)를 뺀 HTML 이 같은 블록은 그대로 두고(수식·다이어그램도 다시 안 그림) 줄 번호만 고칩니다.
+
+  const keyOf = (el) => el.outerHTML.replace(/ data-line(?:-end)?="\d+"/g, '');
+  const lineNodes = (el) => [el, ...el.querySelectorAll('[data-line]')].filter((n) => n.hasAttribute && n.hasAttribute('data-line'));
+
+  function copyLines(from, to) {
+    const a = lineNodes(from), b = lineNodes(to);
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+      b[i].setAttribute('data-line', a[i].getAttribute('data-line'));
+      b[i].setAttribute('data-line-end', a[i].getAttribute('data-line-end'));
+    }
+    return true;
+  }
+
+  function patch(fragment) {
+    const fresh = Array.from(fragment.children);
+    fresh.forEach((el) => { el.__mdyKey = keyOf(el); });
+    const old = Array.from(content.children).filter((el) => !el.classList.contains('mdy-inline-editor'));
+    let start = 0;
+    while (start < old.length && start < fresh.length && old[start].__mdyKey === fresh[start].__mdyKey &&
+           copyLines(fresh[start], old[start])) start++;
+    let endOld = old.length - 1, endNew = fresh.length - 1;
+    while (endOld >= start && endNew >= start && old[endOld].__mdyKey === fresh[endNew].__mdyKey &&
+           copyLines(fresh[endNew], old[endOld])) { endOld--; endNew--; }
+    const anchor = old[endOld + 1] || null;
+    for (let i = start; i <= endOld; i++) old[i].remove();
+    for (let i = start; i <= endNew; i++) content.insertBefore(fresh[i], anchor);
+    // 블록 사이의 빈 글자 노드는 정리
+    Array.from(content.childNodes).forEach((n) => { if (n.nodeType === 3) n.remove(); });
+  }
+
+  window.renderMarkdown = function (src) {
+    sourceLines = String(src).replace(/\r\n?/g, '\n').split('\n');
+    // 미리보기 안에서 고치는 중이면 입력 칸이 사라지지 않게 다 고친 뒤에 그립니다.
+    if (editing) { deferredSrc = src; return true; }
+    suppress(300);
+    const template = document.createElement('template');
+    window.MdyStrings = options.strings || null;
+    template.innerHTML = Markdown.render(src);
+    blockedCount = 0;
+    sanitize(template.content);
+    patch(template.content);
+    content.classList.toggle('empty', !String(src).trim());
+    content.setAttribute('data-empty', T('내용이 없어요'));
+    content.querySelectorAll('.task-list-item > input[type=checkbox]').forEach((cb) => { cb.disabled = false; });
+    addCopyButtons();
+    updateBlockedBar();
+    if (lastHighlight) applyHighlight(lastHighlight.s, lastHighlight.e, lastHighlight.text, false);
+    if (find.query) {
+      const r = runFind(find.query, 0, false);
+      post({ type: 'find', count: r.count, index: r.index });
+    }
+    renderRich();
+    return true;
+  };
+
+  // 외부 이미지를 막았을 때 위쪽 안내 막대
+  function updateBlockedBar() {
+    let bar = document.getElementById('mdy-blocked-bar');
+    const count = content.querySelectorAll('.mdy-blocked').length;
+    if (!count) { if (bar) bar.remove(); return; }
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.id = 'mdy-blocked-bar';
+      const text = document.createElement('span');
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.addEventListener('click', () => {
+        remoteAllowed = true;
+        content.querySelectorAll('.mdy-blocked').forEach((el) => {
+          for (const name of ['src', 'srcset', 'poster']) {
+            const value = el.getAttribute('data-mdy-' + name);
+            if (value) { el.setAttribute(name, value); el.removeAttribute('data-mdy-' + name); }
+          }
+          el.classList.remove('mdy-blocked');
+        });
+        bar.remove();
+      });
+      bar.append(text, button);
+      document.body.prepend(bar);
+    }
+    bar.firstChild.textContent = T('외부 이미지 {}개를 막았어요').replace('{}', count);
+    bar.lastChild.textContent = T('불러오기');
+  }
+
+  // ---------------------------------------------------------------- 설정
+
+  window.mdySetOptions = function (opts) {
+    const before = options.blockRemote;
+    Object.assign(options, opts);
+    window.MdyStrings = options.strings || null;
+    const b = document.body;
+    b.classList.toggle('font-serif', options.font === 'serif');
+    ['narrow', 'wide', 'full'].forEach((w) => b.classList.toggle('width-' + w, options.width === w));
+    b.classList.toggle('theme-paper', options.theme === 'paper');
+    content.setAttribute('data-empty', T('내용이 없어요'));
+    showEditTip();
+    if (before !== undefined && before !== options.blockRemote && sourceLines.length) {
+      content.replaceChildren();
+      window.renderMarkdown(sourceLines.join('\n'));
+    }
+    renderRich();
+  };
+
+  // 처음 몇 번은 "두 번 클릭해서 고치기"를 알려 줍니다.
+  function showEditTip() {
+    const existing = document.getElementById('mdy-tip');
+    if (!options.editTip) { if (existing) existing.remove(); return; }
+    if (existing) return;
+    const tip = document.createElement('div');
+    tip.id = 'mdy-tip';
+    const text = document.createElement('span');
+    text.textContent = T('미리보기를 두 번 클릭하면 그 자리에서 고칠 수 있어요');
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.textContent = T('알겠어요');
+    close.addEventListener('click', () => { tip.remove(); post({ type: 'dismissTip' }); });
+    tip.append(text, close);
+    document.body.appendChild(tip);
+  }
+
+  // ---------------------------------------------------------------- 수식(KaTeX)·다이어그램(Mermaid)
+  // 문서에 실제로 수식·다이어그램이 있을 때만 인터넷에서 한 번 불러옵니다.
+
+  const KATEX = 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/';
+  const MERMAID = 'https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js';
+  const loading = {};
+  const loadScript = (url) => loading[url] || (loading[url] = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.nonce = NONCE;
+    s.src = url;
+    s.onload = resolve;
+    s.onerror = () => { delete loading[url]; s.remove(); reject(new Error('load failed')); };
+    document.head.appendChild(s);
+  }));
+  const loadCSS = (url) => {
+    if (document.querySelector(`link[href="${url}"]`)) return;
+    const l = document.createElement('link');
+    l.rel = 'stylesheet';
+    l.href = url;
+    document.head.appendChild(l);
+  };
+
+  // 앱에 들어 있는 라이브러리가 있으면 앱에서 받아 쓰고(오프라인), 없으면 인터넷에서 불러옵니다.
+  const libWaiters = {};
+  function loadLib(name, url) {
+    if ((options.bundled || []).includes(name)) {
+      return loading[name] || (loading[name] = new Promise((resolve) => {
+        libWaiters[name] = resolve;
+        post({ type: 'needLib', name });
+      }));
+    }
+    return loadScript(url);
+  }
+  window.mdyLibReady = (name) => { if (libWaiters[name]) libWaiters[name](); };
+  // 앱에서 받은 라이브러리를 보통 <script> 처럼 실행합니다 (eval 로 실행하면 Mermaid 가 시작하지 못함).
+  window.mdyProvideLib = (name, code, css) => {
+    if (css) window.mdyAddStyle(css);
+    const script = document.createElement('script');
+    script.nonce = NONCE;
+    script.textContent = code;
+    document.head.appendChild(script);
+    window.mdyLibReady(name);
+  };
+  window.mdyAddStyle = (css) => {
+    const style = document.createElement('style');
+    style.textContent = css;
+    document.head.appendChild(style);
+  };
+
+  let mermaidTheme = null;
+  let mermaidSeq = 0;
+  const svgCache = new Map();
+
+  async function renderRich() {
+    if (!options.rich) return;
+    const maths = content.querySelectorAll('.math, .math-display');
+    if (maths.length) {
+      try {
+        if (!(options.bundled || []).includes('katex')) loadCSS(KATEX + 'katex.min.css');
+        await loadLib('katex', KATEX + 'katex.min.js');
+        maths.forEach((el) => {
+          if (el.querySelector('.katex')) return;
+          try {
+            window.katex.render(el.dataset.tex, el, { displayMode: el.classList.contains('math-display'), throwOnError: false });
+          } catch (e) { /* 원문 그대로 둠 */ }
+        });
+      } catch (e) { /* 오프라인: 원문 표시 */ }
+    }
+    const diagrams = Array.from(content.querySelectorAll('.mermaid:not(.rendered)'));
+    if (diagrams.length) {
+      try {
+        await loadLib('mermaid', MERMAID);
+        const theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default';
+        if (mermaidTheme !== theme) {
+          window.mermaid.initialize({ startOnLoad: false, theme, securityLevel: 'strict' });
+          mermaidTheme = theme;
+        }
+        for (const el of diagrams) {
+          const source = el.textContent;
+          const key = theme + '\n' + source;
+          let svg = svgCache.get(key);
+          if (!svg) {
+            const id = 'mdy-mermaid-' + (++mermaidSeq);
+            try {
+              svg = (await window.mermaid.render(id, source)).svg;
+              svgCache.set(key, svg);
+            } catch (e) {
+              document.getElementById('d' + id)?.remove();
+              el.classList.add('mermaid-error');
+              continue;
+            }
+          }
+          if (el.isConnected && el.textContent === source) {
+            el.dataset.src = source;
+            el.innerHTML = svg;
+            el.classList.add('rendered');
+          }
+        }
+      } catch (e) { /* 오프라인: 원문 표시 */ }
+    }
+  }
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    content.querySelectorAll('.mermaid.rendered').forEach((el) => {
+      el.textContent = el.dataset.src;
+      el.classList.remove('rendered');
+    });
+    renderRich();
+  });
+
+  // ---------------------------------------------------------------- 찾기
+
+  const find = { query: '', ranges: [], index: -1 };
+
+  function runFind(query, step, reveal) {
+    const sameQuery = query === find.query;
+    find.query = query;
+    if (!sameQuery || step === 0) {
+      find.ranges = [];
+      if (query) {
+        const needle = query.toLocaleLowerCase();
+        const walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
+        for (let node; (node = walker.nextNode());) {
+          if (node.parentElement.closest('.mdy-copy, .mdy-inline-editor')) continue;
+          const hay = node.nodeValue.toLocaleLowerCase();
+          if (hay.length !== node.nodeValue.length) continue;
+          for (let at = hay.indexOf(needle); at >= 0; at = hay.indexOf(needle, at + needle.length)) {
+            const r = document.createRange();
+            r.setStart(node, at);
+            r.setEnd(node, at + needle.length);
+            find.ranges.push(r);
+          }
+        }
+      }
+      if (sameQuery && find.index >= 0) {
+        find.index = Math.min(find.index, find.ranges.length - 1);
+      } else {
+        const firstVisible = find.ranges.findIndex((r) => r.getBoundingClientRect().bottom >= 0);
+        find.index = find.ranges.length ? Math.max(0, firstVisible) : -1;
+      }
+    } else if (find.ranges.length) {
+      find.index = (find.index + step + find.ranges.length) % find.ranges.length;
+    }
+
+    if (!window.Highlight) return { count: 0, index: -1 };
+    CSS.highlights.delete('mdy-find');
+    CSS.highlights.delete('mdy-find-current');
+    if (find.ranges.length) {
+      CSS.highlights.set('mdy-find', new Highlight(...find.ranges));
+      const current = find.ranges[find.index];
+      CSS.highlights.set('mdy-find-current', new Highlight(current));
+      if (reveal) {
+        const r = current.getBoundingClientRect();
+        if (r.top < 40 || r.bottom > innerHeight - 20) { suppress(300); window.scrollBy(0, r.top - innerHeight / 3); }
+      }
+    }
+    return { count: find.ranges.length, index: find.index };
+  }
+
+  window.mdyFind = (query, step) => runFind(query, step, true);
+  window.mdyFindClear = function () {
+    find.query = '';
+    find.ranges = [];
+    find.index = -1;
+    if (window.CSS && CSS.highlights) { CSS.highlights.delete('mdy-find'); CSS.highlights.delete('mdy-find-current'); }
+  };
+
+  // ---------------------------------------------------------------- 코드 복사 버튼
+
+  function addCopyButtons() {
+    content.querySelectorAll('pre').forEach((pre) => {
+      if (pre.querySelector('.mdy-copy')) return;
+      const button = document.createElement('button');
+      button.className = 'mdy-copy';
+      button.type = 'button';
+      button.textContent = T('복사');
+      button.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const code = pre.querySelector('code');
+        post({ type: 'copyText', text: (code || pre).textContent });
+        button.textContent = T('복사됨');
+        button.classList.add('done');
+        setTimeout(() => { button.textContent = T('복사'); button.classList.remove('done'); }, 1200);
+      });
+      pre.appendChild(button);
+    });
+  }
+
+  // ---------------------------------------------------------------- 서식 있는 복사 (메일·슬랙·노션에 붙여넣기용)
+
+  // 내보내기·복사용 사본에서 화면 전용 요소를 걷어냅니다.
+  function cleanClone(root) {
+    root.querySelectorAll('.mdy-copy, .mdy-inline-editor').forEach((el) => el.remove());
+    root.querySelectorAll('.mdy-active').forEach((el) => el.classList.remove('mdy-active'));
+    root.querySelectorAll('[data-line]').forEach((el) => { el.removeAttribute('data-line'); el.removeAttribute('data-line-end'); });
+    root.querySelectorAll('[style*="display: none"]').forEach((el) => { el.style.display = ''; });
+  }
+
+  const RICH_STYLES = {
+    table: 'border-collapse:collapse;margin:8px 0',
+    'th,td': 'border:1px solid #d0d7de;padding:4px 10px',
+    th: 'background:#f6f8fa;font-weight:600',
+    pre: 'background:#f6f8fa;padding:10px 12px;border-radius:6px;font-family:Menlo,monospace;font-size:13px;white-space:pre-wrap',
+    code: 'font-family:Menlo,monospace;font-size:0.9em;background:#f3f4f6;padding:1px 4px;border-radius:4px',
+    'pre code': 'background:none;padding:0',
+    blockquote: 'margin:8px 0;padding:0 12px;border-left:4px solid #d0d7de;color:#59636e',
+    'h1,h2': 'border-bottom:1px solid #d0d7de;padding-bottom:4px',
+    mark: 'background:#fff3a3',
+  };
+
+  function richHTML(root) {
+    cleanClone(root);
+    // 수식은 다른 앱에서 그릴 수 없으므로 원래 TeX 로 바꿉니다.
+    root.querySelectorAll('.math, .math-display').forEach((el) => {
+      const display = el.classList.contains('math-display');
+      el.replaceWith(document.createTextNode(display ? `$$${el.dataset.tex}$$` : `$${el.dataset.tex}$`));
+    });
+    root.querySelectorAll('.task-list-item > input').forEach((cb) => {
+      cb.replaceWith(document.createTextNode(cb.checked ? '☑ ' : '☐ '));
+    });
+    for (const [selector, style] of Object.entries(RICH_STYLES)) {
+      root.querySelectorAll(selector).forEach((el) => { el.setAttribute('style', (el.getAttribute('style') || '') + ';' + style); });
+    }
+    root.querySelectorAll('[class]').forEach((el) => {
+      if (!el.matches('.katex, .katex *, .mermaid, .mermaid *')) el.removeAttribute('class');
+    });
+    return '<meta charset="utf-8"><div style="font-family:-apple-system,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.55;color:#1f2328">' +
+      root.innerHTML + '</div>';
+  }
+
+  // 메뉴의 "서식 있는 텍스트로 복사": 원문을 주면 그것을, 아니면 문서 전체를
+  window.mdyRichHTML = function (markdown) {
+    const box = document.createElement('div');
+    if (markdown != null) {
+      box.innerHTML = Markdown.render(markdown);
+      sanitize(box);
+    } else {
+      box.innerHTML = content.innerHTML;
+    }
+    return richHTML(box);
+  };
+
+  // 미리보기에서 ⌘C 하면 다른 앱에서도 서식이 유지되게, 화면 색 대신 깔끔한 서식으로 복사합니다.
+  document.addEventListener('copy', (event) => {
+    if (editing || event.target.closest?.('textarea')) return;
+    const sel = getSelection();
+    if (!sel.rangeCount || sel.isCollapsed) return;
+    const box = document.createElement('div');
+    box.appendChild(sel.getRangeAt(0).cloneContents());
+    event.clipboardData.setData('text/html', richHTML(box));
+    event.clipboardData.setData('text/plain', sel.toString());
+    event.preventDefault();
+  });
+
+  // 다른 문서의 #제목 링크로 들어왔을 때
+  window.mdyScrollToAnchor = function (id) {
+    const target = document.getElementById(decodeURIComponent(id)) ||
+      document.getElementById(decodeURIComponent(id).toLowerCase());
+    if (target) { suppress(300); target.scrollIntoView({ block: 'start' }); }
+  };
+
+  // ---------------------------------------------------------------- HTML 내보내기
+
+  window.mdyExportHTML = function (title) {
+    const clone = content.cloneNode(true);
+    clone.classList.remove('empty');
+    cleanClone(clone);
+    const style = document.querySelector('head style').outerHTML;
+    const katexCSS = clone.querySelector('.katex') ? `<link rel="stylesheet" href="${KATEX}katex.min.css">\n` : '';
+    const safeTitle = String(title).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    return '<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1">\n<meta name="color-scheme" content="light dark">\n' +
+      `<title>${safeTitle}</title>\n${katexCSS}${style}\n</head>\n<body class="${document.body.className}">\n` +
+      `<article id="content">\n${clone.innerHTML}\n</article>\n</body>\n</html>\n`;
+  };
+
+  // ---------------------------------------------------------------- 줄 ↔ 위치
+
+  function anchors() {
+    return Array.from(content.querySelectorAll('[data-line]')).map((el) => {
+      const r = el.getBoundingClientRect();
+      return { el, s: +el.dataset.line, e: +el.dataset.lineEnd, top: r.top + scrollY, bottom: r.bottom + scrollY };
+    }).filter((a) => a.bottom > a.top);
+  }
+
+  function lineToY(line) {
+    const list = anchors();
+    if (!list.length) return 0;
+    let best = null;
+    for (const a of list) if (a.s <= line && line < a.e + 1) best = a;   // 문서 순서상 마지막 = 가장 안쪽
+    if (best) return best.top + (best.bottom - best.top) * (line - best.s) / (best.e - best.s + 1);
+    let prev = null, next = null;
+    for (const a of list) {
+      if (a.e + 1 <= line && (!prev || a.bottom > prev.bottom)) prev = a;
+      if (a.s > line && (!next || a.top < next.top)) next = a;
+    }
+    if (prev && next) {
+      const t = (line - (prev.e + 1)) / Math.max(1, next.s - (prev.e + 1));
+      return prev.bottom + (next.top - prev.bottom) * t;
+    }
+    return prev ? prev.bottom : 0;
+  }
+
+  function yToLine(y) {
+    const list = anchors();
+    if (!list.length) return 0;
+    let best = null;
+    for (const a of list) if (a.top <= y && y < a.bottom) best = a;
+    if (best) return best.s + (y - best.top) / (best.bottom - best.top) * (best.e - best.s + 1);
+    let prev = null, next = null;
+    for (const a of list) {
+      if (a.bottom <= y && (!prev || a.bottom > prev.bottom)) prev = a;
+      if (a.top > y && (!next || a.top < next.top)) next = a;
+    }
+    if (prev && next) {
+      const t = (y - prev.bottom) / Math.max(1, next.top - prev.bottom);
+      return prev.e + 1 + (next.s - prev.e - 1) * t;
+    }
+    return prev ? prev.e + 1 : 0;
+  }
+
+  window.mdyScrollToLine = function (line, edge) {
+    suppress(250);
+    const max = document.documentElement.scrollHeight - innerHeight;
+    const y = edge === 'top' ? 0 : edge === 'bottom' ? max : lineToY(line);
+    window.scrollTo(0, Math.max(0, Math.min(max, y)));
+  };
+
+  let scrollFrame = 0;
+  addEventListener('scroll', () => {
+    if (performance.now() < suppressUntil || scrollFrame) return;
+    scrollFrame = requestAnimationFrame(() => {
+      scrollFrame = 0;
+      const max = document.documentElement.scrollHeight - innerHeight;
+      const edge = scrollY <= 0 ? 'top' : scrollY >= max - 1 ? 'bottom' : '';
+      post({ type: 'scroll', line: yToLine(scrollY), edge });
+    });
+  }, { passive: true });
+
+  // ---------------------------------------------------------------- 선택 위치 표시
+
+  // 마크다운 기호를 걷어내 미리보기 글자와 비교할 수 있게 합니다.
+  function plainOf(src) {
+    return src
+      .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
+      .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+      .replace(/^[ \t]*(?:>[ \t]?)+/gm, '')
+      .replace(/^[ \t]*(?:[-*+]|\d+[.)])[ \t]+(?:\[[ xX]\][ \t]+)?/gm, '')
+      .replace(/^[ \t]*#{1,6}[ \t]+/gm, '')
+      .replace(/\\([^\w\s])/g, '$1')
+      .replace(/[*_`~]|==/g, '')
+      .replace(/\s*\|\s*/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function findText(elements, raw) {
+    const needle = plainOf(raw);
+    if (!needle) return null;
+    for (const el of elements) {
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      let full = '';
+      const map = [];
+      let space = true;
+      for (let node; (node = walker.nextNode());) {
+        const t = node.nodeValue;
+        for (let k = 0; k < t.length; k++) {
+          if (/\s/.test(t[k])) { if (space) continue; full += ' '; space = true; }
+          else { full += t[k]; space = false; }
+          map.push([node, k]);
+        }
+      }
+      let idx = full.indexOf(needle);
+      if (idx < 0) idx = full.toLowerCase().indexOf(needle.toLowerCase());
+      if (idx < 0) continue;
+      const [sn, so] = map[idx];
+      const [en, eo] = map[idx + needle.length - 1];
+      const range = document.createRange();
+      range.setStart(sn, so);
+      range.setEnd(en, eo + 1);
+      return range;
+    }
+    return null;
+  }
+
+  function clearHighlight() {
+    content.querySelectorAll('.mdy-active').forEach((el) => el.classList.remove('mdy-active'));
+    if (window.CSS && CSS.highlights) CSS.highlights.delete('mdy');
+  }
+
+  function applyHighlight(s, e, text, reveal) {
+    clearHighlight();
+    const hits = Array.from(content.querySelectorAll('[data-line]'))
+      .filter((el) => +el.dataset.line <= e && +el.dataset.lineEnd >= s);
+    const deepest = hits.filter((el) => !hits.some((o) => o !== el && el.contains(o)));
+    if (!deepest.length) return;
+    deepest.forEach((el) => el.classList.add('mdy-active'));
+
+    let target = deepest[0];
+    if (text) {
+      const range = findText(deepest, text);
+      if (range && window.Highlight) {
+        CSS.highlights.set('mdy', new Highlight(range));
+        target = range;
+      }
+    }
+    if (reveal) {
+      const r = target.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > innerHeight) {
+        suppress(300);
+        window.scrollBy(0, r.top - innerHeight / 3);
+      }
+    }
+  }
+
+  // 편집기에서 커서/선택이 바뀔 때 호출됩니다.
+  window.mdyHighlight = function (s, e, text, reveal) {
+    lastHighlight = { s, e, text };
+    applyHighlight(s, e, text, reveal);
+  };
+
+  // ---------------------------------------------------------------- 미리보기에서 바로 고치기
+  // 두 번 클릭한 블록을 그 자리에서 마크다운 입력 칸으로 바꿉니다. 입력하는 대로 원본에 반영됩니다.
+  // (⌥ 를 누르고 두 번 클릭하면 왼쪽 원본의 그 자리로 이동)
+
+  function editableBlock(target) {
+    return target.closest('table[data-line]') || target.closest('[data-line]');
+  }
+
+  function autosize(ta) {
+    ta.style.height = 'auto';
+    ta.style.height = ta.scrollHeight + 2 + 'px';
+  }
+
+  function startEdit(block, word) {
+    if (editing) finishEdit(false);
+    let s, e;
+    if (block) {
+      s = +block.dataset.line;
+      e = +block.dataset.lineEnd;
+    } else if (!content.querySelector('[data-line]') && !content.textContent.trim()) {
+      s = 0;
+      e = Math.max(0, sourceLines.length - 1);   // 빈 문서
+    } else {
+      return;
+    }
+    const original = sourceLines.slice(s, e + 1).join('\n');
+
+    const box = document.createElement('div');
+    box.className = 'mdy-inline-editor';
+    const ta = document.createElement('textarea');
+    ta.value = original;
+    ta.spellcheck = false;
+    ta.placeholder = T('마크다운으로 쓰세요');
+    const hint = document.createElement('div');
+    hint.className = 'mdy-inline-hint';
+    hint.textContent = T('원본 {}줄 · 다 고쳤으면 ⌘↩ 또는 바깥 클릭 · esc 는 취소').replace('{}', `${s + 1}${e > s ? '–' + (e + 1) : ''}`);
+    box.append(ta, hint);
+    if (block) {
+      block.before(box);
+      block.style.display = 'none';
+    } else {
+      content.classList.remove('empty');
+      content.prepend(box);
+    }
+
+    editing = { s, e, original, last: original, box, block, timer: 0 };
+    autosize(ta);
+    ta.focus();
+    const at = word ? original.indexOf(word) : -1;
+    if (at >= 0) ta.setSelectionRange(at, at + word.length);
+    else ta.setSelectionRange(original.length, original.length);
+    post({ type: 'select', start: s, end: e, text: '' });
+
+    ta.addEventListener('input', () => {
+      autosize(ta);
+      clearTimeout(editing.timer);
+      editing.timer = setTimeout(sendEdit, 120);
+    });
+    ta.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Escape') { ev.preventDefault(); finishEdit(true); }
+      else if (ev.key === 'Enter' && (ev.metaKey || ev.ctrlKey)) { ev.preventDefault(); finishEdit(false); }
+      else if (ev.key === 'Tab') {
+        ev.preventDefault();
+        ta.setRangeText('  ', ta.selectionStart, ta.selectionEnd, 'end');
+        ta.dispatchEvent(new Event('input'));
+      }
+    });
+    ta.addEventListener('blur', () => {
+      setTimeout(() => { if (editing && editing.box === box) finishEdit(false); }, 0);
+    });
+  }
+
+  function sendEdit() {
+    if (!editing) return;
+    clearTimeout(editing.timer);
+    const text = editing.box.querySelector('textarea').value;
+    if (text === editing.last) return;
+    post({ type: 'replaceLines', start: editing.s, end: editing.e, text });
+    editing.last = text;
+    editing.e = editing.s + text.split('\n').length - 1;   // 줄 수가 바뀌어도 다음 반영 범위가 맞게
+  }
+
+  function finishEdit(cancel) {
+    const ed = editing;
+    if (!ed) return;
+    if (cancel) ed.box.querySelector('textarea').value = ed.original;
+    sendEdit();
+    editing = null;
+    ed.box.remove();
+    if (ed.block) ed.block.style.display = '';
+    if (deferredSrc !== null) {
+      const src = deferredSrc;
+      deferredSrc = null;
+      window.renderMarkdown(src);
+    }
+  }
+
+  content.addEventListener('dblclick', (event) => {
+    if (event.target.closest('a, input, button, .mdy-inline-editor')) return;
+    const block = editableBlock(event.target);
+    const word = getSelection().toString().trim().slice(0, 200);
+    if (event.altKey && block) {
+      post({ type: 'edit', start: +block.dataset.line, end: +block.dataset.lineEnd, text: word });
+      return;
+    }
+    getSelection().removeAllRanges();
+    startEdit(block, word);
+  });
+
+  // 체크리스트 상자를 누르면 원본의 [ ] ↔ [x] 를 바꿉니다.
+  content.addEventListener('change', (event) => {
+    const cb = event.target;
+    if (!cb.matches('.task-list-item > input[type=checkbox]')) return;
+    const li = cb.closest('li[data-line]');
+    if (li) post({ type: 'toggleTask', line: +li.dataset.line });
+  });
+
+  // 미리보기에서 클릭·선택하면 원본 위치를 편집기로 보냅니다.
+  const lineOf = (node) => (node && (node.nodeType === 1 ? node : node.parentElement))?.closest('[data-line]');
+  let selectTimer = 0;
+  document.addEventListener('selectionchange', () => {
+    clearTimeout(selectTimer);
+    selectTimer = setTimeout(() => {
+      if (editing) return;
+      const sel = getSelection();
+      if (!sel.rangeCount) return;
+      const range = sel.getRangeAt(0);
+      if (!content.contains(range.commonAncestorContainer)) return;
+      const first = lineOf(range.startContainer);
+      const last = lineOf(range.endContainer) || first;
+      if (!first) return;
+      lastHighlight = null;
+      clearHighlight();
+      const text = sel.isCollapsed ? '' : sel.toString().slice(0, 2000);
+      post({ type: 'select', start: +first.dataset.line, end: Math.max(+last.dataset.lineEnd, +first.dataset.line), text });
+    }, 60);
+  });
+
+  // 문서 안 목차 링크(#제목)는 미리보기 안에서 스크롤만 합니다.
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest('a[href^="#"]');
+    if (!link) return;
+    event.preventDefault();
+    const id = decodeURIComponent(link.getAttribute('href').slice(1));
+    const target = id ? document.getElementById(id) : document.body;
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+})();
+</script>
+</body>
+</html>
